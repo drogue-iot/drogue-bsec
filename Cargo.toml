@@ -18,7 +18,7 @@ drogue-bme680 = "0.3.0"
 [features]
 dump = []
 stm32f4xx = []
-stm32f7xx = []
+display = []
 
 [dev-dependencies]
 

@@ -1,12 +1,11 @@
-use core::fmt::Write;
 use drogue_bme680::Data;
 use drogue_bsec::{Accuracy, Outputs};
 use embedded_graphics::drawable::Drawable;
-use embedded_graphics::fonts::{Font, Font24x32, Font6x12, Font6x8, Font8x16, Text};
+use embedded_graphics::fonts::{Font, Font24x32, Font6x8, Text};
 use embedded_graphics::geometry::Point;
 use embedded_graphics::pixelcolor::{Rgb565, RgbColor};
 use embedded_graphics::primitives::{Primitive, Rectangle};
-use embedded_graphics::style::{PrimitiveStyle, Styled, TextStyle};
+use embedded_graphics::style::{PrimitiveStyle, TextStyle};
 use embedded_graphics::DrawTarget;
 use embedded_hal::blocking::delay::DelayMs;
 use embedded_hal::digital::v2::OutputPin;
@@ -52,14 +51,6 @@ where
         Ok(())
     }
 
-    pub fn set_text(&mut self, text: &str, top: i32, left: i32, width: i32) -> Result<(), ()> {
-        self.clear_rect(Rectangle::new(Point::new(left, top), Point::new(width, 20)))?;
-
-        Text::new(text, Point::new(left, top))
-            .into_styled(TextStyle::new(Font8x16, Rgb565::new(255, 255, 255)))
-            .draw(&mut self.inner)
-    }
-
     fn accuracy_as_text<F, P1, P2>(
         &mut self,
         value: &Option<Accuracy<f32>>,
@@ -87,7 +78,7 @@ where
             _ => "<??>",
         };
 
-        text_provider(&mut b2, s);
+        text_provider(&mut b2, s).map_err(|_| ())?;
 
         let color = match value {
             None => Rgb565::CYAN,
@@ -107,7 +98,7 @@ where
         color: Rgb565,
         vpadding: i32,
         top: i32,
-        mut left: i32,
+        left: i32,
         width: i32,
     ) -> Result<(), ()>
     where
@@ -170,7 +161,7 @@ where
 
         let s: &str = match value {
             Some(v) => {
-                value_provider(&mut b1, v).map_err(|e| ())?;
+                value_provider(&mut b1, v).map_err(|_| ())?;
                 &b1
             }
             None => "??",

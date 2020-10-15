@@ -47,32 +47,19 @@ use stm32f7xx_hal::device::Peripherals as DevicePeripherals;
 use hal::i2c::{BlockingI2c, Mode};
 
 #[cfg(all(feature = "stm32f4xx", feature = "display"))]
-use stm32f4xx_hal::{
-    gpio::{
-        gpioa::{PA5, PA6, PA7},
-        gpioc::{PC4, PC5},
-        AF5,
-    },
-    spi::Spi,
-};
+use stm32f4xx_hal::spi::Spi;
 
 use hal::interrupt;
-
-#[cfg(all(feature = "stm32f4xx", feature = "display"))]
-use stm32f4::stm32f411::SPI1;
 
 #[cfg(feature = "display")]
 use embedded_hal::digital::v2::OutputPin;
 #[cfg(feature = "display")]
 use embedded_hal::spi::MODE_0;
-#[cfg(feature = "display")]
-use hal::gpio::{Alternate, Output, PushPull};
 
 use hal::{delay::Delay, gpio::GpioExt, rcc::RccExt, time::U32Ext};
 
 use drogue_bme680::{
-    Address, Bme680Controller, Bme680Sensor, Configuration, DelayMsWrapper, Filter, Oversampling,
-    StaticProvider,
+    Address, Bme680Controller, Bme680Sensor, Configuration, DelayMsWrapper, Filter, StaticProvider,
 };
 
 use log::LevelFilter;
@@ -86,7 +73,7 @@ use core::cell::RefCell;
 use core::convert::TryInto;
 use core::ops::DerefMut;
 use cortex_m::interrupt::{free, Mutex};
-use embedded_time::{Clock, Instant};
+use embedded_time::Clock;
 use hal::timer::Timer;
 use stm32f4xx_hal::timer::Event;
 
@@ -154,6 +141,7 @@ fn main() -> ! {
     // delay implementation
 
     let delay = Delay::new(cp.SYST, clocks);
+    #[allow(unused_mut)]
     let mut delay = DelayMsWrapper::new(delay);
 
     let mut tim = Timer::tim2(p.TIM2, 1000.hz(), clocks);
@@ -232,8 +220,6 @@ fn main() -> ! {
         Bme680Controller::new(bme680, delay, Configuration::standard(), StaticProvider(25))
             .unwrap();
 
-    let mut cnt = 0;
-
     let mut bsec = Bsec::new().unwrap().unwrap();
 
     bsec.update_subscription(
@@ -285,8 +271,13 @@ fn main() -> ! {
 
                 let outputs = bsec.process_data(get_now(), &inputs).unwrap();
 
+                #[cfg(feature = "display")]
                 if let Some(display) = &mut display {
                     display.set_state(&data, &outputs).unwrap();
+                }
+                #[cfg(not(feature = "display"))]
+                {
+                    log::info!("Output: {:?}", outputs);
                 }
 
                 log::info!("end timestamp - {}", get_now());
