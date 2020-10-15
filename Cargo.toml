@@ -58,4 +58,4 @@ bindgen = "0.55.1"
 
 [patch.crates-io]
 ssd1351 = { git = "https://github.com/ctron/ssd1351.git", branch = "feature/update_deps_1" }
-drogue-bme680 = { path = "../drogue-bme680" }
+#drogue-bme680 = { path = "../drogue-bme680" }
