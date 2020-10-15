@@ -1,4 +1,7 @@
+#![allow(dead_code)]
+
 use core::convert::TryFrom;
+
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 impl bsec_virtual_sensor_t {

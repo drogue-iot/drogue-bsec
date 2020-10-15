@@ -62,7 +62,6 @@ const NUM_PHYSICAL_SENSORS: u8 = 8;
 pub struct Error(pub bsec_library_return_t);
 type Result<T> = core::result::Result<T, Error>;
 
-const EMPTY_SENSORS: [bsec_sensor_configuration_t; 0] = [];
 const EMPTY_INPUT: bsec_input_t = bsec_input_t {
     sensor_id: 0,
     signal: 0.0,
@@ -214,6 +213,7 @@ impl Bsec {
         }
     }
 
+    #[allow(dead_code)]
     fn physical_sensors(&self) -> &[bsec_sensor_configuration_t] {
         &self.internal_physical_sensors[0..self.num_physical_sensors]
     }
