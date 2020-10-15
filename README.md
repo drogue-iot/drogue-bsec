@@ -37,9 +37,32 @@ See:
 * [BSEC-Arduino-library](https://github.com/BoschSensortec/BSEC-Arduino-library) in GitHub from Bosch Sensortec
 * [Git Submodules](https://www.git-scm.com/book/en/v2/Git-Tools-Submodules)
 
+## TODOs
+
+* [ ] Provide a way to load and save the internal state
+* [ ] Allow providing custom configuration settings
+
 ## Example
 
+The example can be run with:
 
+    cargo +nightly run --release --target --target thumbv7em-none-eabihf --features stm32f4xx,display --example simple
+
+It assumes that:
+
+* You are running on an STM32F411
+  
+  Other chips and boards should be possible, but you need to tweak the configuration for that.
+
+* Have the BME680 attached to I2C2
+* Have a ssd1351 compatible display attached to SPI1 (if the display feature is used)
+  * CS to PC13
+  * DC to PC5
+  * RST to PC4
+
+If you enabled the `display` feature, it should look like this:
+
+![photo of a device running the example with a display](docs/example-with-display.jpg)
 
 ## Build
 

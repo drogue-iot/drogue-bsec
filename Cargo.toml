@@ -4,6 +4,14 @@ version = "0.1.0"
 authors = ["Jens Reimann <jreimann@redhat.com>"]
 edition = "2018"
 
+license = "UNLICENSED"
+description = "An interface for the BSEC library"
+repository = "https://github.com/drogue-iot/drogue-bsec"
+homepage = "https://blog.drogue.io"
+categories = ["embedded", "no-std"]
+keywords = ["bosch", "bme680", "bsec", "sensor"]
+readme = "README.md"
+
 [dependencies]
 
 cty = "0.2"

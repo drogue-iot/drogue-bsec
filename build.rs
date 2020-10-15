@@ -8,7 +8,19 @@ use std::fs::File;
 use std::io::Write;
 
 fn select_lib_dir(base: &PathBuf) -> PathBuf {
-    base.join("cortex-m4").join("fpv4-sp-d16-hard")
+    let target = env::var_os("TARGET")
+        .and_then(|os| os.into_string().ok())
+        .unwrap_or_default();
+
+    match target.as_str() {
+        "" => {
+            panic!("'TARGET' env-var is missing during build");
+        }
+        "thumbv7em-none-eabihf" => base.join("cortex-m4").join("fpv4-sp-d16-hard"),
+        other => {
+            panic!("Unsupported target platform ({}). Most likely the `build.rs` just misses a mapping. Pull requests are welcome ;-)", other);
+        }
+    }
 }
 
 fn main() {
